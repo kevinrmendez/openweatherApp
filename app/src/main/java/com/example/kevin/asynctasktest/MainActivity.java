@@ -1,12 +1,18 @@
 package com.example.kevin.asynctasktest;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -34,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
     private WeatherDbHelper dbHelper;
     private SQLiteDatabase db;
     private ContentValues values;
+    private Handler mHandler;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
 
          dbHelper = new WeatherDbHelper(this);
          db = dbHelper.getWritableDatabase();
+
+
         /*
         values = new ContentValues();
         values.put("id","1");
@@ -124,12 +135,28 @@ public class MainActivity extends AppCompatActivity {
                 values.put("temperature",temp);
 
 
-                long row = db.insert("weather",null,values);
-                if(row > 0){
-                    Toast.makeText(mContext,"data inserted",Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(mContext,"data not inserted",Toast.LENGTH_SHORT).show();
-                }
+                final long  row = db.insert("weather",null,values);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(row > 0){
+                            Toast.makeText(mContext,"data inserted",Toast.LENGTH_SHORT).show();
+                            NotificationCompat.Builder notification =  new NotificationCompat.Builder(mContext);
+                            notification.setContentTitle("data inserted");
+                            notification.setSmallIcon(R.mipmap.ic_launcher_round);
+                            notification.setContentText("Your data has been inserted in the database");
+                            notification.setAutoCancel(true);
+
+                            NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+                            notificationManager.notify(0,notification.build());
+                        }else{
+                            Toast.makeText(mContext,"data not inserted",Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+
 
                 return weather;
 
