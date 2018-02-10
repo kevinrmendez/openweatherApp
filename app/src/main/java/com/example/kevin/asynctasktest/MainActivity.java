@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
                 values.put("temperature",temp);
 
 
+
                 final long  row = db.insert("weather",null,values);
 
                 runOnUiThread(new Runnable() {
@@ -142,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         if(row > 0){
                             Toast.makeText(mContext,"data inserted",Toast.LENGTH_SHORT).show();
+
                             NotificationCompat.Builder notification =  new NotificationCompat.Builder(mContext);
                             notification.setContentTitle("data inserted");
                             notification.setSmallIcon(R.mipmap.ic_launcher_round);
